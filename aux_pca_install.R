@@ -13,7 +13,7 @@ install.packages(c("FactoMineR","CCA","klaR"))
 install.packages(c("caret","matrixTests","multiColl","spls","performance","smacof","paran","moments"))
 install.packages(c("plyr","dplyr","BBmisc","flextable","psych","skimr","gtsummary","ggpubr","ggcorrplot","kableExtra"))
 install.packages("skimr")
-install.packages("mFD")
+install.packages(c("vegan","ecodist","mFD"))
 #######################################################################################################
 # useful function
 
