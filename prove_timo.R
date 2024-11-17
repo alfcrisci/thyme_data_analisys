@@ -13,7 +13,7 @@ set.seed(123)
 
 #############################################################
 
-setwd("C:\\aaa_lavori\\lav_timo_morfo")
+setwd("C:\\aaa_lavori\\lav_timo_morfo") # Qui indicare la directory dove mettere i dati.
 
 source("aux_pca.R")
 
