@@ -12,6 +12,7 @@ install.packages(c("cluster","factoextra","flexclust","hopkins","ClusterR","clus
 install.packages(c("FactoMineR","CCA","klaR"))
 install.packages(c("caret","matrixTests","multiColl","spls","performance","smacof","paran","moments"))
 install.packages(c("plyr","dplyr","BBmisc","flextable","psych","skimr","gtsummary","ggpubr","ggcorrplot","kableExtra"))
+install.packages("skimr")
 
 #######################################################################################################
 # useful function
