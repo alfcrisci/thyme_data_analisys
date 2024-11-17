@@ -84,8 +84,10 @@ fviz_cluster(res.hk, data = df)
 
 res.hk <-hkmeans(df, 4,hc.metric =  'euclidean',hc.method="centroid" )
 fviz_cluster(res.hk, data = df)
+###############################################################################################
+# clustering with medoids
 
-
+clusplot(pam(na.omit(X[-1]), k=4),main="Clustering with PAM medoids")
 ###############################################################################################
 # Analisi di gruppo per variabile
 
