@@ -42,11 +42,18 @@ Y=timo_morfo_pca_df[,1]
 ord=PCA(X)
 ggord(ord, Y,txt=F,arrow=F,obslab=T,ellipse=F)
 
+# get  factors and write excels
+###############################################################################################
+
+coords <- data.frame(ord$var$coord)
+coords$labs <- row.names(coords)
+write.xlsx(coords,"coords.xlsx")
+
 
 ###############################################################################################
-# cluster analisys
+# cluster analisys silhouette analisys
 
-df=na.omit(X[,-1])
+df=na.omit(X[,-1]) # to eliminate missing data !!!
 
 silhouette_score <- function(k){
   km <- kmeans(df, centers = k, nstart=25)
@@ -75,7 +82,7 @@ fviz_cluster(res.hk, data = df)
 
 
 
-res.hk <-hkmeans(df, 4,hc.metric =  'manhattan',hc.method="centroid" )
+res.hk <-hkmeans(df, 4,hc.metric =  'euclidean',hc.method="centroid" )
 fviz_cluster(res.hk, data = df)
 
 
