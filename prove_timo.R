@@ -22,16 +22,20 @@ source("aux_pca.R")
 timo_morfo_df<-read.xlsx("timo_morfo.xlsx","dati")
 
 #####################################################################################
-# "Leaf_surface"     
-# "Leaf_length"       "Blade_leaf_length" "Blade_leaf_width" 
-# "T_N_Abaxial_leaf"  "T_narea"           "flower_length"    
-# "Calix_length"      "Corolla_length"   
+# [1] "ID"                "sample"           
+# [3] "leaf_surface"      "leaf_length"      
+# [5] "blade_leaf_length" "blade_leaf_width" 
+# [7] "tn_abaxial_leaf"   "t_narea"          
+# [9] "flower_length"     "calix_length"     
+# [11] "corolla_length"
 #####################################################################################
 
 
 timo_morfo_pca_df=timo_morfo_df[,-2]
 
 
+###############################################################################################
+# PCA analisys
 
 X=timo_morfo_pca_df[,-1]
 Y=timo_morfo_pca_df[,1]
@@ -78,28 +82,8 @@ fviz_cluster(res.hk, data = df)
 ###############################################################################################
 
 
-
-
-
-
-
-
-p <- ggbetweenstats(timo_morfo_df, 
+g_leaf_surface <- ggbetweenstats(timo_morfo_df, 
                     ID, 
-                    Leaf_surface,pairwise.display = 'none')
+                    leaf_surface,pairwise.display = 'none')
 
 ##########################################################
-
-
-
-
-mod1 <- lm(Fertility ~ ., data = swiss)
-ggcoef_model(mod1)
-
-models <- list(
-  "Full model" = mod1,
-  "Simplified model" = mod2,
-  "With interaction" = mod3
-)
-
-ggcoef_compare(models, type = "faceted")
