@@ -6,7 +6,7 @@ library(gridExtra)
 library(cowplot)
 library(openxlsx)
 library(heplots) # Visualizing Hypothesis Tests in Multivariate Linear Models
-
+library(ggstatplot)
 ########################################################################
 
 library(cluster)
