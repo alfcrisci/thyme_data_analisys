@@ -1,11 +1,17 @@
-# if not installed unccoment & run next 2 line
-  
+##################################################################################################################
+# Questo codice è un esercizio di data analisys su dati GC MS #terpeni #morfologia #IBE #IBBR 
 
+# Se i seguenti pacchetti R non sono installati prova a scommentare ( togliere cancelletto) e lanciare le successive 2 linee di codice
 # install.packages(c("umap", "dendextend","mgcv","reticulate"))
 # install.packages("estimatr")
  
+#############################################################
 
-################################################
+setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo dei file dezippati.
+
+
+##################################################################################################################
+# carica le librerie necessarie
 
   library(reticulate)
   library(openxlsx)
@@ -17,6 +23,7 @@
   library(mgcv)
   library(effects)
   library(estimatr)
+  source("aux_pca.R")
 
   ##############################################################
   # imposto un valore sul generatore dei numeri casuali per asssicurarmi la riproducibilità
@@ -24,15 +31,6 @@
   
   set.seed(123)
   
-
-
-#############################################################
-
-setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo dei file dezippati.
-
-source("aux_pca.R")
-
-#############################################################
 
   #############################################################
   
@@ -56,18 +54,19 @@ source("aux_pca.R")
   timo_qual_df_mag<-read.xlsx("timo_qual.xlsx","mag2024qual")
   timo_qual_df_giu<-read.xlsx("timo_qual.xlsx","giu2024qual")
   names(timo_qual_df_giu)
-  ##########################################################
-  # [1] "ID"               "a_pinene"         "a_thujene"       
-  # [4] "camphene"         "b_pinene"         "sabinene"        
-  # [7] "myrcene"          "a_phellandrene"   "a_terpinene"     
-  # [10] "limonene"         "cineolo"          "trans_b_ocimene" 
-  # [13] "g_terpinene"      "cis_b_ocimene"    "p_cymene"        
-  # [16] "camphor"          "linalool"         "linalylacetate"  
-  # [19] "four_ol_terpinen" "b_caryophillene"  "a_terpineol"     
-  # [22] "borneol"          "a_citral"         "geranylacetate"  
-  # [25] "nerol"            "geraniol"         "thymol"          
-  # [28] "eugenol"          "carvacrol" 
-  ###################################################################################
+
+##########################################################
+# [1] "ID"               "a_pinene"         "a_thujene"       
+# [4] "camphene"         "b_pinene"         "sabinene"        
+# [7] "myrcene"          "a_phellandrene"   "a_terpinene"     
+# [10] "limonene"         "cineolo"          "trans_b_ocimene" 
+# [13] "g_terpinene"      "cis_b_ocimene"    "p_cymene"        
+# [16] "camphor"          "linalool"         "linalylacetate"  
+# [19] "four_ol_terpinen" "b_caryophillene"  "a_terpineol"     
+# [22] "borneol"          "a_citral"         "geranylacetate"  
+# [25] "nerol"            "geraniol"         "thymol"          
+# [28] "eugenol"          "carvacrol" 
+###################################################################################
   
   timo_quant_FW_df_nov<-read.xlsx("timo_quant.xlsx","novFW2023quant")
   timo_quant_FW_df_feb<-read.xlsx("timo_quant.xlsx","febFW2024quant")
@@ -81,12 +80,17 @@ source("aux_pca.R")
   sort(names(timo_quant_FW_df_nov))==sort(names(timo_qual_df_giu))
   length(timo_quant_FW_df_nov)==length(timo_quant_FW_df_feb)
   
-#####################################################################################
 ###################################################################################### 
+# verifica la dimensione delle matrici di lavoro
+
   dim(timo_morfo_med_df) 
   dim(timo_morfo_bil_df)
   dim(timo_qual_df_giu)
   dim(timo_quant_DW_df_giu)
+
+########################################################################################à
+# unisco le matrici 
+
   giu2024qual=timo_qual_df_giu
   giuDW2024quant=timo_quant_DW_df_giu
   
@@ -94,13 +98,18 @@ source("aux_pca.R")
   quant2morfo=merge(giuDW2024quant,timo_morfo_med_df,by="ID")
   
   write.xlsx(list(qual2morfo,quant2morfo),"matrici_analisi.xlsx")
-  ##################################################################################
+
+##################################################################################
+# Questa è una fase esplorativa  dei dati utilizzando le matrici unite dei dati sui composti e quelli morfologici
+# Utilizzo 
+  
+  G <- gam(total~s(g_terpinene)+leaf_surface,data=quant2morfo)
+  summary(G) # chiedo le caratteristiche del modello
+  plot(G) #  figura della curva
+
+  G_lin <-lm(total~g_terpinene+leaf_surface,data=quant2morfo)
+  summary(G_lin) # chiedo le caratteristiche del modello
  
-  
-   G <- gam(total~s(g_terpinene)+leaf_surface,data=quant2morfo)
-  
-  plot(G)
-  
   G <- gam(total~s(p_cymene)+leaf_surface,data=quant2morfo)
   
   plot(G)
