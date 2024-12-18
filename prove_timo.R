@@ -16,6 +16,11 @@
 
 # devtools::install_github("corybrunson/ordr")
 # devtools::install_github("corybrunson/ordr.extra")
+
+# Se vedi durante installazione questa frase
+# "Enter one or more numbers, or an empty line to skip updates:" 
+# PREMI 1.
+
 #############################################################
 
 setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo dei file dezippati.
