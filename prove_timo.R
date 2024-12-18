@@ -4,7 +4,10 @@
 # Se i seguenti pacchetti R non sono installati prova a scommentare ( togliere cancelletto) e lanciare le successive 2 linee di codice
 # install.packages(c("umap", "dendextend","mgcv","reticulate"))
 # install.packages("estimatr")
- 
+# Enable the r-universe repo
+# Se non è installato  ggord
+# options(repos = c( fawda123 = 'https://fawda123.r-universe.dev', CRAN = 'https://cloud.r-project.org'))
+# install.packages('ggord') 
 #############################################################
 
 setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo dei file dezippati.
@@ -13,7 +16,7 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
 ##################################################################################################################
 # carica le librerie necessarie
 
-  library(reticulate)
+  library(reticulate) 
   library(openxlsx)
   library(ggstatsplot)
   library(ggstats)
@@ -23,7 +26,8 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
   library(mgcv)
   library(effects)
   library(estimatr)
-  source("aux_pca.R")
+  library(estimatr)
+  source("aux_pca.R") # carica tutte le altre
 
   ##############################################################
   # imposto un valore sul generatore dei numeri casuali per asssicurarmi la riproducibilità
