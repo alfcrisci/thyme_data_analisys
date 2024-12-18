@@ -2,12 +2,16 @@
 # Questo codice è un esercizio di data analisys su dati GC MS #terpeni #morfologia #IBE #IBBR 
 
 # Se i seguenti pacchetti R non sono installati prova a scommentare ( togliere cancelletto) e lanciare le successive 2 linee di codice
+
 # install.packages(c("umap", "dendextend","mgcv","reticulate"))
 # install.packages("estimatr")
+
 # Enable the r-universe repo
 # Se non è installato  ggord
+
 # options(repos = c( fawda123 = 'https://fawda123.r-universe.dev', CRAN = 'https://cloud.r-project.org'))
 # install.packages('ggord') 
+
 # Se non è installato  ordr e ordr.extra
 
 # devtools::install_github("corybrunson/ordr")
