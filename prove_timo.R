@@ -26,7 +26,9 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
   library(mgcv)
   library(effects)
   library(estimatr)
-  library(estimatr)
+  library(FactominerR) # per PCA 
+  library(MASS) # per stepAIC
+
   source("aux_pca.R") # carica tutte le altre
 
   ##############################################################
@@ -37,12 +39,13 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
   
 
   #############################################################
-  
+  # Leggi i file di dati 
+
   timo_morfo_bil_df<-read.xlsx("timo_morfo.xlsx","dati_bilanciati")
   timo_morfo_med_df<-read.xlsx("timo_morfo.xlsx","dati_mediati")
   
-  view(timo_morfo_bil_df)
-  view(timo_morfo_med_df)
+  View(timo_morfo_bil_df)
+  View(timo_morfo_med_df)
   
   names(timo_morfo_bil_df)
   
@@ -57,6 +60,7 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
   timo_qual_df_feb<-read.xlsx("timo_qual.xlsx","feb2024qual")
   timo_qual_df_mag<-read.xlsx("timo_qual.xlsx","mag2024qual")
   timo_qual_df_giu<-read.xlsx("timo_qual.xlsx","giu2024qual")
+
   names(timo_qual_df_giu)
 
 ##########################################################
@@ -103,56 +107,17 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
   
   write.xlsx(list(qual2morfo,quant2morfo),"matrici_analisi.xlsx")
 
-##################################################################################
-# Questa è una fase esplorativa  dei dati utilizzando le matrici unite dei dati sui composti e quelli morfologici
-# Utilizzo 
-  
-  G <- gam(total~s(g_terpinene)+leaf_surface,data=quant2morfo) # esempio lineare
-  summary(G) # chiedo le caratteristiche del modello
-  plot(G) #  figura della curva
-
-  G_lin <-lm(total~g_terpinene+leaf_surface,data=quant2morfo) # esempio lineare
-  summary(G_lin) # chiedo le caratteristiche del modello
- 
-  G <- gam(total~s(p_cymene)+leaf_surface,data=quant2morfo)
-  
-  plot(G)
-  
-  G <- gam(total~s(thymol)+leaf_surface,data=quant2morfo)
-  
-  plot(G)
-  
-  G <- gam(total~s(carvacrol)+leaf_surface,data=quant2morfo)
-  
-  plot(G)
-  
-  G <- gam(total~s(tn_abaxial_leaf)+leaf_surface,data=quant2morfo)
-  
-  plot(G)
-  ##############################################################################
-  lm_tricome <- lm(total~tn_abaxial_leaf,data=quant2morfo[1:16,])
-  summary(lm_tricome)
-  plot(lm_tricome,2)
-  eall_tricome <- predictorEffects(lm_tricome)
-  plot(eall_tricome)
-  lm_tricome_robust <- lm_robust(total~tn_abaxial_leaf,data=quant2morfo)
-  
-  ##############################################################################
-  # Kosakowska, Olga & Baczek, Katarzyna & Przybył, Jarosław & Pawełczak, Anna & Rolewska, Katarzyna & Węglarz, Zenon. (2020). 
-  # Morphological and Chemical Traits as Quality Determinants of Common Thyme (Thymus vulgaris L.), on the Example of ‘Standard Winter’ Cultivar. Agronomy. 10. 909. 10.3390/agronomy10060909. 
-   #https://www.researchgate.net/publication/342456313_Morphological_and_Chemical_Traits_as_Quality_Determinants_of_Common_Thyme_Thymus_vulgaris_L_on_the_Example_of_'Standard_Winter'_Cultivar
-   #Thymol and carvacrol biosynthesis pathway (Mikio and Taeko, 1962). 
-  
-  ##################################################################################
-  # 
-  aa=stepAIC(lm(total~leaf_surface+leaf_length+blade_leaf_length+blade_leaf_width+tn_abaxial_leaf+t_narea+flower_length+calix_length+corolla_length,quant2morfo))
-  bb=stepAIC(lm(thymol~leaf_surface+leaf_length+blade_leaf_length+blade_leaf_width+tn_abaxial_leaf+t_narea+flower_length+calix_length+corolla_length,qual2morfo))
-  
-  # risultati troppo deboli
-  
-        
 #####################################################################################
-# PCA morfo
+# La strategia in analisi multivariata è sempre quella:
+
+# A) Analisi delle PCA per capire le  
+# B) Analisi delle UMAP ( PCA non lineari ) per capire se vi è un ordine de idati che rispecchia il lableing di campionamento o di altro raggruppamento
+# C) Esplorazione non lineare o lineare con i modelli della matrice dati
+# D) Clustering dei dati
+# E) Confronto fra gruppi con ggstatsplot
+
+#####################################################################################
+# PCA morfologici
   
 # eliminate sample var ( is a label categorical variable not used)
 
@@ -164,7 +129,7 @@ X=timo_morfo_pca_df[,-1]
 Y=timo_morfo_pca_df[,1]
 ord=PCA(X)
 
-#title="PCA loading vectors morphological variables"
+# title="PCA loading vectors morphological variables"
 
 ggord(ord, Y,txt=F,arrow=F,obslab=T,ellipse=T)
 
@@ -185,7 +150,8 @@ final %>%
        y = "UMAP2",
        subtitle = "Thyme morfological clusters")
 
-# ref https://datavizpyr.com/how-to-make-umap-plot-in-r/
+# reference
+# https://datavizpyr.com/how-to-make-umap-plot-in-r/
 ################################################################################
 # PCA qual
 
@@ -216,16 +182,78 @@ final.qual %>%
        subtitle = "Thyme volatile based clusters")
 
 
+##################################################################################
+# Questa è una fase esplorativa  dei dati utilizzando le matrici unite dei dati sui composti e quelli morfologici
+# Utilizzo le matrici unite
+  
+  G <- gam(total~s(g_terpinene)+leaf_surface,data=quant2morfo) # esempio lineare
+  summary(G) # chiedo le caratteristiche del modello
+  plot(G) #  figura della curva
+
+  G_lin <-lm(total~g_terpinene+leaf_surface,data=quant2morfo) # esempio lineare
+  summary(G_lin) # chiedo le caratteristiche del modello
+ 
+  G <- gam(total~s(p_cymene)+leaf_surface,data=quant2morfo)
+  
+  plot(G)
+  
+  G <- gam(total~s(thymol)+leaf_surface,data=quant2morfo)
+  
+  plot(G)
+  
+  G <- gam(total~s(carvacrol)+leaf_surface,data=quant2morfo)
+  
+  plot(G)
+  
+  G <- gam(total~s(tn_abaxial_leaf)+leaf_surface,data=quant2morfo)
+  
+  plot(G)
+  ##############################################################################
+  # ho capito che 
+  lm_tricome <- lm(total~tn_abaxial_leaf,data=quant2morfo[1:16,])
+  summary(lm_tricome)
+  plot(lm_tricome,2)
+  eall_tricome <- predictorEffects(lm_tricome)
+  plot(eall_tricome)
+  lm_tricome_robust <- lm_robust(total~tn_abaxial_leaf,data=quant2morfo)
+  
+  ##############################################################################
+  # Kosakowska, Olga & Baczek, Katarzyna & Przybył, Jarosław & Pawełczak, Anna & Rolewska, Katarzyna & Węglarz, Zenon. (2020). 
+  # Morphological and Chemical Traits as Quality Determinants of Common Thyme (Thymus vulgaris L.), on the Example of ‘Standard Winter’ Cultivar. Agronomy. 10. 909. 10.3390/agronomy10060909. 
+   #https://www.researchgate.net/publication/342456313_Morphological_and_Chemical_Traits_as_Quality_Determinants_of_Common_Thyme_Thymus_vulgaris_L_on_the_Example_of_'Standard_Winter'_Cultivar
+   #Thymol and carvacrol biosynthesis pathway (Mikio and Taeko, 1962). 
+  
+  ##################################################################################
+  # Analisi  di selezione con modello con predittando terpeni totali ( total) o timolo ( thymol)
+
+
+  aa=stepAIC(lm(total~leaf_surface+leaf_length+blade_leaf_length+blade_leaf_width+tn_abaxial_leaf+t_narea+flower_length+calix_length+corolla_length,quant2morfo))
+ 
+  bb=stepAIC(lm(thymol~leaf_surface+leaf_length+blade_leaf_length+blade_leaf_width+tn_abaxial_leaf+t_narea+flower_length+calix_length+corolla_length,qual2morfo))
+
+  # Nelle variabili aa e bb avrete il modello finale selezionate con AIC più basso ( AKAIKE INFORMATION CRITERION)
+
+  summary(aa)
+  summary(bb)
+
+  # risultati a mio avviso troppo deboli
+
+
 ################################################################################
 # cluster analisys
 
+# faccio prima l'analisi di silhouette pe capire il numero di cluster migliore
+# prima creo delle funzioni per il plot successivo
 
+# funzione caratteri morfologici
 
 silhouette_score_morfo <- function(k){
   km <- kmeans(df, centers = k, nstart=25)
   ss <- silhouette(km$cluster, dist(df))
   mean(ss[, 3])
 }
+
+# funzionecaratteri qualitativi
 
 silhouette_score_qual <- function(k){
   km <- kmeans(df_qual, centers = k, nstart=25)
@@ -236,9 +264,12 @@ silhouette_score_qual <- function(k){
 
 
 ################################################################################################################
+# provo da 2 a 10 cluster
+
 k <- 2:10
 
 avg_sil_morfo <- sapply(k, silhouette_score_morfo)
+
 plot(k, avg_sil_morfo,  type='b',
      xlab='Number of clusters', 
      ylab='Average Silhouette Scores',
@@ -247,6 +278,7 @@ plot(k, avg_sil_morfo,  type='b',
 
 
 avg_sil_qual <- sapply(k, silhouette_score_qual)
+
 plot(k, avg_sil_qual,  type='b',
      xlab='Number of clusters', 
      ylab='Average Silhouette Scores',
@@ -254,9 +286,12 @@ plot(k, avg_sil_qual,  type='b',
      frame=F)
 
 ################################################################################################################
-df_qual=timo_qual_df_giu[,-1]
+# visualizzo
 
-row.names(df_qual)<-timo_qual_df_giu$ID
+df_qual=timo_qual_df_giu[,-1]  # tolgo le label dai dati
+
+row.names(df_qual)<-timo_qual_df_giu$ID # metto le label com nome riga
+
 res.hk.qual <-hkmeans(df_qual, 4,hc.metric =  'euclidean')
 fviz_dend(res.hk.qual,
           cex = 0.5,
@@ -266,15 +301,20 @@ fviz_dend(res.hk.qual,
           rect_fill = TRUE,
           main="Cluster con composti volatili",
           sub="cluster")
-df=timo_morfo_med_df[,-1]
-row.names(df)<-timo_morfo_med_df$ID
-
-df=df[-2,]
-df=df[-2,]
 
 
 
-res.hk.morfo <-hkmeans(df, 4,hc.metric =  'euclidean') # manhattan 
+df=timo_morfo_med_df[,-1]           # tolgo le label dai dati
+row.names(df)<-timo_morfo_med_df$ID # metto le label com nome riga
+
+df=df[-2,]  # tolgo colonne testo che danno noia
+df=df[-2,]  # tolgo colonne testo che danno noia
+
+
+######################################################################################
+
+res.hk.morfo <-hkmeans(df, 4,hc.metric =  'euclidean') # posso provare 'manhattan' al posto di 'euclidean' 
+
 fviz_dend(res.hk.morfo,
           cex = 0.5,
           palette = "jco", 
@@ -284,12 +324,16 @@ fviz_dend(res.hk.morfo,
           main="Cluster con parametri morfologici",
           sub="cluster")
 
-dend1 <- as.dendrogram (res.hk.morfo$hclust)
-dend2 <- as.dendrogram (res.hk.qual$hclust)
+###########################################################################################
+# creo i due dendrogrammi 
+dend_morfo <- as.dendrogram (res.hk.morfo$hclust)
+dend_qual <- as.dendrogram (res.hk.qual$hclust)
+
 # Create a list to hold dendrograms
-dend_list <- dendlist(dend1, dend2)
+dend_list <- dendlist(dend_morfo, dend_qual)
 
 ##############################################################################################################
+# creo un diagramma incrociato
 
 tanglegram(dend1, 
            dend2, 
@@ -302,16 +346,19 @@ tanglegram(dend1,
            main_right="Chemiotypes",
            cex_main = 2)
 
+#########################################################àààà
+# guarda le che relazioni ci sono fra i dendrogrammi 
 
-cor_bakers_gamma(dend1, dend2)
-cor_cophenetic(dend1, dend2)
+cor_bakers_gamma(dend_morfo, dend_qual)
+cor_cophenetic(dend_morfo, dend_qual)
 
 ################################################################################################################
+# altro tipo di visualizzazione a ellissi
 
 fviz_cluster(res.hk.morfo, data = df)
+
 fviz_cluster(res.hk.qual, data = df)
 
-################################################################################################################
 
 ###############################################################################################
 # Analisi di gruppo per variabile
