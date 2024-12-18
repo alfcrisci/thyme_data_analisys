@@ -1,9 +1,12 @@
-# install R       https://cran.r-project.org/bin/windows/base/
-# install Rtools  https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html 
-# install Rstudio https://posit.co/download/rstudio-desktop/
+#######################################################################################################################
+# Prima di iniziare su win controllare che 
+
+# installare R       https://cran.r-project.org/bin/windows/base/
+# installare Rtools  https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html 
+# installare Rstudio https://posit.co/download/rstudio-desktop/
 
 #######################################################################################################
-# installazione pacchetto
+# installazioni pacchetti
 
 install.packages("devtools")
 
