@@ -8,6 +8,10 @@
 # Se non è installato  ggord
 # options(repos = c( fawda123 = 'https://fawda123.r-universe.dev', CRAN = 'https://cloud.r-project.org'))
 # install.packages('ggord') 
+# Se non è installato  ordr e ordr.extra
+
+# devtools::install_github("corybrunson/ordr")
+# devtools::install_github("corybrunson/ordr.extra")
 #############################################################
 
 setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo dei file dezippati.
