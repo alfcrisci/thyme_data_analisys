@@ -88,8 +88,8 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
   dim(timo_qual_df_giu)
   dim(timo_quant_DW_df_giu)
 
-########################################################################################à
-# unisco le matrici 
+####################################################################################################
+# unisco le matrici con i dati sui composti relativi ( qual) e assoluti in ppm ( quant) di giugno
 
   giu2024qual=timo_qual_df_giu
   giuDW2024quant=timo_quant_DW_df_giu
@@ -103,11 +103,11 @@ setwd("") # Qui indicare la directory dove mettere i dati e dove sono il gruppo 
 # Questa è una fase esplorativa  dei dati utilizzando le matrici unite dei dati sui composti e quelli morfologici
 # Utilizzo 
   
-  G <- gam(total~s(g_terpinene)+leaf_surface,data=quant2morfo)
+  G <- gam(total~s(g_terpinene)+leaf_surface,data=quant2morfo) # esempio lineare
   summary(G) # chiedo le caratteristiche del modello
   plot(G) #  figura della curva
 
-  G_lin <-lm(total~g_terpinene+leaf_surface,data=quant2morfo)
+  G_lin <-lm(total~g_terpinene+leaf_surface,data=quant2morfo) # esempio lineare
   summary(G_lin) # chiedo le caratteristiche del modello
  
   G <- gam(total~s(p_cymene)+leaf_surface,data=quant2morfo)
